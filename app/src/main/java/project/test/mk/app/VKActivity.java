@@ -3,6 +3,9 @@ package project.test.mk.app;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,8 +15,12 @@ import java.io.ObjectInputStream;
 public class VKActivity extends AppCompatActivity {
 
     private TextView textRadius, textGeschw, textGMax;
+    private EditText textSpeed;
+
     private BTManager btManager;
     private BTMsgHandler btMsgHandler;
+
+    private Button btnTest;
 
     double geschw, gmax;
 
@@ -28,6 +35,8 @@ public class VKActivity extends AppCompatActivity {
         textRadius = (TextView)findViewById(R.id.text_radius);
         textGeschw = (TextView)findViewById(R.id.text_geschw);
         textGMax = (TextView)findViewById(R.id.text_gmax);
+        textSpeed = (EditText)findViewById(R.id.textSpeed);
+        btnTest = (Button)findViewById(R.id.btnTest);
 
         pref = getSharedPreferences("KeyValues", 0);
         gmax = getGmax();
@@ -66,18 +75,41 @@ public class VKActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
+        btnTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                test();
+            }
+        });
+
 
 
     }
+    private void text2(){
+        double g1 = getGmax();
+        textGMax.setText("" + g1);
+
+        double g2 = Double.parseDouble(textGeschw.getText().toString());
+
+
+    }
+    private void test(){
+        String s1 = textSpeed.getText().toString();
+        Double v = Double.parseDouble(s1) / 3.6;
+
+        double a = getGmax();
+        double radius = radiusBerechnen(v,a);
+        textGMax.setText("" + a);
+        textRadius.setText(""+ radius);
+
+
+    }
+
     private double getGmax(){
         try {
-            double d = (double)pref.getFloat("gmax",0);
-            if (d != 0){
-                return d;
-            }else{
-                Toast.makeText(getApplicationContext(), "gmax read error", Toast.LENGTH_LONG).show();
-                return 0;
-            }
+            String s1 = pref.getString("gMax",null);
+            double d = Double.parseDouble(s1);
+            return d;
         } catch(Exception e){
             Toast.makeText(getApplicationContext(), "gmax read error", Toast.LENGTH_LONG).show();
             return 0;
@@ -85,8 +117,7 @@ public class VKActivity extends AppCompatActivity {
     }
 
     public double radiusBerechnen (double v, double a){
-        double r;
-        r = (v * v) / a;
+        double r = Math.pow(v,2) / a;
         return r;
     }
 

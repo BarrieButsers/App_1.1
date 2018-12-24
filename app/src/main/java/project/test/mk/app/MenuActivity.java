@@ -27,13 +27,8 @@ public class MenuActivity extends AppCompatActivity {
     private BTMsgHandler btMsgHandler;
     private BTManager btManager;
 
-    private ArrayList listPerm;
-    //private ArrayList listTemp;
-
     //Startup
-    private static boolean startup = true;
     private String s1;
-
     private SharedPreferences pref;
 
 
@@ -41,27 +36,6 @@ public class MenuActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        if (startup == true){
-            try {
-                pref = getSharedPreferences("KeyValues", 0);
-                s1 = pref.getString("Address", null);
-            } catch (Exception ex) {
-                Toast.makeText(getApplicationContext(), "BT Starup Error", Toast.LENGTH_LONG).show();
-            }
-            if(s1 != null) {
-                ArrayList a1 = btManager.getPairedDeviceInfos();
-                for (int i = 0; i < a1.size(); i++) {
-                    if (a1.get(i).toString().equals(s1)) {
-                        String address = s1.substring(s1.length() - 17);
-                        btManager.connect(address);
-                    }
-                }
-            }
-        }
-        startup = false;
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
@@ -116,82 +90,8 @@ public class MenuActivity extends AppCompatActivity {
         }
 
         btconn();
-
-
-/*
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!prefs.getBoolean("onlyonce", false)) {
-            // <---- run your one time code here
-
-
-            // mark once runned.
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("onlyonce", true);
-            editor.commit();
-        }
-
-    }
-*/
-
-
-
-
-}
-
-    /*
-    public void getBTList(){
-        try {
-            // create a new file with an ObjectOutputStream
-            FileOutputStream out = new FileOutputStream("test.txt");
-            ObjectOutputStream oout = new ObjectOutputStream(out);
-
-            // write something in the file
-            oout.writeObject(s);
-            oout.writeObject(i);
-
-            // close the stream
-            oout.close();
-
-            // create an ObjectInputStream for the file we created before
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream("test.txt"));
-
-            // read and print what we wrote before
-            System.out.println("" + (String) ois.readObject());
-            System.out.println("" + ois.readObject());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
-
-    private void startupBTCheck(){
-        ArrayList listTemp = btManager.getPairedDeviceInfos();
-        if (listPerm != null){
-            for (int i = 0; i<listPerm.size(); i++){
-                String s1 = listPerm.get(i).toString();
-                for (int o = 0; o<listPerm.size(); o++){
-                    String s2 = listTemp.get(o).toString();
-                    if (s1.equals(s2)){
-                        String a = s1.substring(s1.length() - 17);
-                        //textViewBTStatus.setText("Connecting...");
-                        btManager.connect(a);
-                    }
-                }
-            }
-        }
-
-
-    }
-
-    private void getListPerm(){
-        try {
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream("BTConnections.txt"));
-            listPerm.add(ois.readObject());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-*/
 
     //Bluetooth
 
@@ -250,5 +150,61 @@ public class MenuActivity extends AppCompatActivity {
         return pref.getString("Address", null);
     }
 
+
+
+    /*
+    public void getBTList(){
+        try {
+            // create a new file with an ObjectOutputStream
+            FileOutputStream out = new FileOutputStream("test.txt");
+            ObjectOutputStream oout = new ObjectOutputStream(out);
+
+            // write something in the file
+            oout.writeObject(s);
+            oout.writeObject(i);
+
+            // close the stream
+            oout.close();
+
+            // create an ObjectInputStream for the file we created before
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream("test.txt"));
+
+            // read and print what we wrote before
+            System.out.println("" + (String) ois.readObject());
+            System.out.println("" + ois.readObject());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
+    private void startupBTCheck(){
+        ArrayList listTemp = btManager.getPairedDeviceInfos();
+        if (listPerm != null){
+            for (int i = 0; i<listPerm.size(); i++){
+                String s1 = listPerm.get(i).toString();
+                for (int o = 0; o<listPerm.size(); o++){
+                    String s2 = listTemp.get(o).toString();
+                    if (s1.equals(s2)){
+                        String a = s1.substring(s1.length() - 17);
+                        //textViewBTStatus.setText("Connecting...");
+                        btManager.connect(a);
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    private void getListPerm(){
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream("BTConnections.txt"));
+            listPerm.add(ois.readObject());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+*/
 
 }

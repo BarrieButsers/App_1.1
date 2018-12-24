@@ -26,6 +26,8 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
     private Button btnSave;
 
     private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
+
 
     int count = 0;
     double x = 0;
@@ -38,79 +40,78 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kalibrierung);
 
-        textMaxG = (TextView)findViewById(R.id.textMaxG);
-        xText = (TextView)findViewById(R.id.xText);
-        text10 = (TextView)findViewById(R.id.textView10);
-        text11 = (TextView)findViewById(R.id.textView11);
-        btnSave = (Button)findViewById(R.id.btn_save);
+        textMaxG = (TextView) findViewById(R.id.textMaxG);
+        xText = (TextView) findViewById(R.id.xText);
+        text10 = (TextView) findViewById(R.id.textView10);
+        text11 = (TextView) findViewById(R.id.textView11);
+        btnSave = (Button) findViewById(R.id.btn_save);
 
         pref = getSharedPreferences("KeyValues", 0);
+        editor = pref.edit();
 
         gDurchsArray.add(0.0);
-        sensorManager = (SensorManager) getSystemService (SENSOR_SERVICE);
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener( this, sensor, SensorManager.SENSOR_DELAY_GAME);
-
+        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                   writePref(gMax);
-                } catch (Exception ex) {
-                    Toast.makeText(getApplicationContext(), "write error", Toast.LENGTH_LONG).show();
-                }
+                writePref(gMax);
             }
         });
-    }
 
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-
-        double x = event.values[0];
-        double y = event.values[1];
-        double z = event.values[2];
-        xText.setText(""+ this.x +"C: "+count);
-        count++;
-        gMax = kaliGmax(x,y,z);
-        textMaxG.setText(""+gMax);
 
     }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
 
-    }
+                double x = event.values[0];
+                double y = event.values[1];
+                double z = event.values[2];
+                xText.setText("" + x + "C: " + count);
+                count++;
+                gMax = kaliGmax(x, y, z);
+                textMaxG.setText("" + gMax);
 
-    private double kaliGmax(double x, double y, double z){
+            }
 
-        double gDurchs;
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
-        double x1= (Math.abs(x))/9.81;
-        gAdd = gAdd + x1;
-        if (count >= 10){   // !! TIMER EINBAUEN !!
-            gDurchs = gAdd / count;
-            gDurchsArray.add(gDurchs);
-            count = 0;
-            gDurchs = 0;
-            gAdd = 0;
+            }
 
-        }
-        gMax = Collections.max(gDurchsArray);
-        return gMax;
+            private double kaliGmax(double x, double y, double z) {
 
-    }
+                double gDurchs;
 
-    private void writePref(double gmax){
-        SharedPreferences.Editor editor = pref.edit();
-        Float f = (float)gmax;
-        editor.putFloat("gmax",f);
-        editor.commit();
-        gDurchsArray.clear();
-        gMax = 0;
+                double x1 = (Math.abs(x)) / 9.81;
+                gAdd = gAdd + x1;
+                if (count >= 10) {   // !! TIMER EINBAUEN !!
+                    gDurchs = gAdd / count;
+                    gDurchsArray.add(gDurchs);
+                    count = 0;
+                    gDurchs = 0;
+                    gAdd = 0;
+                }
+                gMax = Collections.max(gDurchsArray);
+                return gMax;
 
-    }
+            }
+
+            private void writePref(double gmax) {
+                try {
+                    editor.putString("gMax",""+gmax);
+                    editor.apply();
+                    //gDurchsArray.clear();
+                    Toast.makeText(getApplicationContext(), "write successful", Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "write error", Toast.LENGTH_LONG).show();
+
+                }
+
+            }
 
     /*
     public void getBTList(){
@@ -135,7 +136,7 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-    */
-}
 
+    */
+
+}

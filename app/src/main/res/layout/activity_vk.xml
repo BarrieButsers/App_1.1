@@ -13,11 +13,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:gravity="center"
         android:text="Kurvenradius"
         android:textSize="22dp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -46,16 +44,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="300dp"
-        android:layout_height="269dp"
+    <EditText
+        android:id="@+id/textSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:ems="10"
+        android:hint="Geschwindigkeit in km/h"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/btnTest"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="36dp"
-        app:layout_constraintBottom_toTopOf="@+id/text_geschw"
+        android:text="Button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:srcCompat="@tools:sample/avatars[3]" />
+        app:layout_constraintStart_toEndOf="@+id/textSpeed"
+        app:layout_constraintTop_toBottomOf="@+id/text_radius" />
 
 </android.support.constraint.ConstraintLayout>
