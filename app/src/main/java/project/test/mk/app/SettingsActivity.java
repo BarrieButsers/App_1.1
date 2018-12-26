@@ -40,7 +40,7 @@ public class SettingsActivity extends AppCompatActivity {
         textViewBTStatus = (TextView)findViewById(R.id.textView_BTStatus);
         btList = (ListView)findViewById(R.id.list_BTDevice);
 
-        pref = getSharedPreferences("KeyValues", 0);
+        pref = getSharedPreferences("BTAddress", MODE_PRIVATE);
 
         btMsgHandler = new BTMsgHandler() {
             @Override
@@ -71,29 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
-/*
-        //DropDown Menü
-        ArrayList list = btManager.getPairedDeviceInfos();
-        ArrayAdapter dropdownAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, list);
-        dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        dropdown.setAdapter(dropdownAdapter);
 
-        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                String info = parent.getItemAtPosition(position).toString();
-                address = info.substring(info.length() - 17);
-                btManager.connect(address);
-                textViewBTStatus.setText("Connecting ...");
-
-            } // to close the onItemSelected
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-
-            }
-        });
-*/
         listTemp = btManager.getPairedDeviceInfos();
         if (listTemp.size()>0) {
             final ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, listTemp);
@@ -118,7 +96,6 @@ public class SettingsActivity extends AppCompatActivity {
         }
     };
 
-    // Write to BTConnections.txt
     private void writeListPerm(String info){
         try {
             SharedPreferences.Editor editor = pref.edit();
@@ -128,5 +105,31 @@ public class SettingsActivity extends AppCompatActivity {
                 ex.printStackTrace();
         }
     }
+
+
+
+    /*
+        //DropDown Menü
+        ArrayList list = btManager.getPairedDeviceInfos();
+        ArrayAdapter dropdownAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, list);
+        dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dropdown.setAdapter(dropdownAdapter);
+
+        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                String info = parent.getItemAtPosition(position).toString();
+                address = info.substring(info.length() - 17);
+                btManager.connect(address);
+                textViewBTStatus.setText("Connecting ...");
+
+            } // to close the onItemSelected
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+
+            }
+        });
+*/
 
 }

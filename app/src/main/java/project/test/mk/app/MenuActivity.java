@@ -45,7 +45,7 @@ public class MenuActivity extends AppCompatActivity {
         btnSettings = (Button)findViewById(R.id.buttonSettings);
         textbtStat = (TextView)findViewById(R.id.textViewConnStat);
 
-
+        pref = getSharedPreferences("BTAddress", MODE_PRIVATE);
 
         btnSettings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,19 +89,23 @@ public class MenuActivity extends AppCompatActivity {
 
         }
 
-        btconn();
+        btconn(getAddress());
     }
+
 
 
     //Bluetooth
 
-    private void btconn(){
+    private void btconn(String btInfo){
         try{
-            btManager.connect(getAddress());
+            String address = btInfo.substring(btInfo.length() - 17);
+            btManager.connect(address);
         }catch(Exception e){
             Toast.makeText(getApplicationContext(), "BT Conn error", Toast.LENGTH_LONG).show();
         }
     }
+
+
 
     //BT-Settings Button
 
@@ -123,6 +127,8 @@ public class MenuActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+
     //Open Activity Methoden
 
     private void openSettings(){
@@ -143,6 +149,8 @@ public class MenuActivity extends AppCompatActivity {
         Intent intent = new Intent(this, KalibrierungActivity.class);
         startActivity(intent);
     }
+
+
 
     //Get-Set Methoden
 

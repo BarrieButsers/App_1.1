@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">App_1.1</string>
+    
+    <string-array name="profil">
+        <item>Profil 1</item>
+        <item>Profil 2</item>
+        <item>Profil 3</item>
+        <item>Profil 4</item>
+        <item>Profil 5</item>
+        <item>Profil 6</item>
+    </string-array>
+
+    <string-array name="straßenBedingungen">
+        <item>Trocken</item>
+        <item>Nass</item>
+        <item>Schnee</item>
+    </string-array>
 </resources>

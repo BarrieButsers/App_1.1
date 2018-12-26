@@ -85,21 +85,14 @@ public class VKActivity extends AppCompatActivity {
 
 
     }
-    private void text2(){
-        double g1 = getGmax();
-        textGMax.setText("" + g1);
 
-        double g2 = Double.parseDouble(textGeschw.getText().toString());
-
-
-    }
     private void test(){
         String s1 = textSpeed.getText().toString();
         Double v = Double.parseDouble(s1) / 3.6;
 
         double a = getGmax();
         double radius = radiusBerechnen(v,a);
-        textGMax.setText("" + a);
+        textGMax.setText("" + a / 9.81);
         textRadius.setText(""+ radius);
 
 
