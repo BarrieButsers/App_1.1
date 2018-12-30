@@ -2,34 +2,32 @@ package project.test.mk.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.io.*;
-
-import java.util.ArrayList;
+import com.google.gson.Gson;
 
 public class MenuActivity extends AppCompatActivity {
 
     private Button btn1, btn2, btn3, btnSettings;
     private TextView textbtStat;
+    private Spinner spinner_profil;
 
     private BTMsgHandler btMsgHandler;
     private BTManager btManager;
 
-    //Startup
-    private String s1;
-    private SharedPreferences pref;
+    private SharedPreferences prefAddress, prefProfil;
+
 
 
 
@@ -44,8 +42,10 @@ public class MenuActivity extends AppCompatActivity {
         btn3 = (Button)findViewById(R.id.button3);
         btnSettings = (Button)findViewById(R.id.buttonSettings);
         textbtStat = (TextView)findViewById(R.id.textViewConnStat);
+        spinner_profil = (Spinner)findViewById(R.id.spinner_MProfil);
 
-        pref = getSharedPreferences("BTAddress", MODE_PRIVATE);
+        prefAddress = getSharedPreferences("BTAddress", MODE_PRIVATE);
+        prefProfil = getSharedPreferences("Profil", MODE_PRIVATE);
 
         btnSettings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,6 +61,13 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openNK();
+            }
+        });
+
         btMsgHandler = new BTMsgHandler() {
             @Override
             void receiveMessage(String msg) {
@@ -72,7 +79,7 @@ public class MenuActivity extends AppCompatActivity {
                 if (isConnected){
                     textbtStat.setText("Connected");
                 }else{
-                    textbtStat.setText("failed");
+                    textbtStat.setText("No Connection");
                 }
             }
 
@@ -90,6 +97,23 @@ public class MenuActivity extends AppCompatActivity {
         }
 
         btconn(getAddress());
+
+        ArrayAdapter<CharSequence> adapterBedingung = ArrayAdapter.createFromResource(this, R.array.profil, android.R.layout.simple_spinner_item);
+        adapterBedingung.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_profil.setAdapter(adapterBedingung);
+        spinner_profil.setSelection(0);
+        getProfil(0);
+        spinner_profil.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                getProfil(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
 
@@ -142,6 +166,8 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private void openNK(){
+        Intent intent = new Intent(this, NKActivity.class);
+        startActivity(intent);
 
     }
 
@@ -155,7 +181,23 @@ public class MenuActivity extends AppCompatActivity {
     //Get-Set Methoden
 
     private String getAddress(){
-        return pref.getString("Address", null);
+        return prefAddress.getString("Address", null);
+    }
+
+    private void getProfil(int key){
+        Gson gson = new Gson();
+        String json = prefProfil.getString(""+key, "");
+        Profil profil = gson.fromJson(json, Profil.class);
+        if (profil != null) {
+            double d = profil.getgMax();
+            SharedPreferences.Editor editor = prefAddress.edit();
+            editor.putString("GMax", ""+d);
+            editor.commit();
+        }else{
+            Toast.makeText(getApplicationContext(), "Profil keine Kalibrierung", Toast.LENGTH_LONG).show();
+
+        }
+
     }
 
 

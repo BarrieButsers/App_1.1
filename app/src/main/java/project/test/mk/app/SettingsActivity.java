@@ -1,20 +1,17 @@
 package project.test.mk.app;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.reflect.Array;
+
 import java.util.ArrayList;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -26,10 +23,11 @@ public class SettingsActivity extends AppCompatActivity {
     private ListView btList;
 
     private ArrayList listTemp;
-    private ArrayList listPerm;
-    public static String address;
+    private String address;
 
     private SharedPreferences pref;
+
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +35,13 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
        // dropdown = (Spinner)findViewById(R.id.dropdown);
-        textViewBTStatus = (TextView)findViewById(R.id.textView_BTStatus);
+        textViewBTStatus = (TextView)findViewById(R.id.textv_BTStatus);
         btList = (ListView)findViewById(R.id.list_BTDevice);
 
         pref = getSharedPreferences("BTAddress", MODE_PRIVATE);
+
+        actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
 
         btMsgHandler = new BTMsgHandler() {
             @Override
@@ -81,6 +82,14 @@ public class SettingsActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "No Paired Bluetooth Devices Found.", Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        btManager.cancel();
+        Intent i = new Intent(this, MenuActivity.class);
+        startActivity(i);
+        return true;
     }
 
     private AdapterView.OnItemClickListener myListClickListener = new AdapterView.OnItemClickListener()

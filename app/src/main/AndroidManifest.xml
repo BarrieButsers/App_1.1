@@ -23,13 +23,28 @@
         <activity
             android:name=".SettingsActivity"
             android:parentActivityName=".MenuActivity" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MenuActivity" />
         <activity
             android:name=".VKActivity"
-            android:parentActivityName=".MenuActivity"/>
+            android:parentActivityName=".MenuActivity" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MenuActivity" />
         <activity
             android:name=".KalibrierungActivity"
-            android:parentActivityName=".MenuActivity"
-            ></activity>
+            android:parentActivityName=".MenuActivity" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MenuActivity" />
+        <activity
+            android:name=".NKActivity"
+            android:parentActivityName=".MenuActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MenuActivity" />
+        </activity>
     </application>
 
 </manifest>

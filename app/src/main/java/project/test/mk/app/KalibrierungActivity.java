@@ -10,6 +10,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -32,7 +33,7 @@ import java.util.Collections;
 public class KalibrierungActivity extends AppCompatActivity implements SensorEventListener, AdapterView.OnItemSelectedListener {
 
     private EditText texte_name;
-    private TextView textv_temperatur, textv_gWert, textv_messung;
+    private TextView textv_temperatur, textv_gWert, textv_messung, textv_BT;
     private Button btn_save;
     private Spinner spinner_profil, spinner_bedingung;
     private Switch switch_messung;
@@ -44,7 +45,6 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
     private BTMsgHandler btMsgHandler;
 
     private SharedPreferences pref;
-    private SharedPreferences.Editor editor;
 
     private boolean messungLauft;
     private int strassenBedPos;
@@ -57,6 +57,8 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
     double gMax = 0;
     double save_gMax;
     ArrayList<Double> gDurchsArray = new ArrayList<>();
+
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +73,12 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
         spinner_profil = (Spinner)findViewById(R.id.spinner_profil);
         switch_messung = (Switch)findViewById(R.id.switch_messung);
         textv_messung = (TextView)findViewById(R.id.textv_messung);
+        textv_BT = (TextView)findViewById(R.id.textv_KaliBT);
 
         pref = getSharedPreferences("Profil", MODE_PRIVATE);
+
+        actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
 
         //BT Verbindung
 
@@ -87,6 +93,11 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
 
             @Override
             void receiveConnectStatus(boolean isConnected) {
+                if (isConnected){
+                    textv_BT.setText("Connected");
+                }else{
+                    textv_BT.setText("No Connection");
+                }
 
             }
 
@@ -139,7 +150,7 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
         spinner_profil.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setUI(getProfil());
+                setUI(getProfil(position));
             }
 
             @Override
@@ -174,6 +185,14 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
 
 
     }// ENDE ON-CREATE
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        btManager.cancel();
+        Intent i = new Intent(this, MenuActivity.class);
+        startActivity(i);
+        return true;
+    }
 
 
     // BT Connection aufbauen
@@ -261,10 +280,10 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
         }
     }
 
-    private Profil getProfil(){
-        String key = spinner_profil.getSelectedItemId()+"";
+    private Profil getProfil(int key){
+        //String key = spinner_profil.getSelectedItemId()+"";
         Gson gson = new Gson();
-        String json = pref.getString(key, "");
+        String json = pref.getString(""+key, "");
         Profil profil = gson.fromJson(json, Profil.class);
        if (profil != null) {
             return profil;
@@ -312,7 +331,7 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
 
     }
 
-    public String roundAndFormat(final double value, final int frac) {
+    private String roundAndFormat(final double value, final int frac) {
         final java.text.NumberFormat nf = java.text.NumberFormat.getInstance();
         nf.setMaximumFractionDigits(frac);
         return nf.format(new BigDecimal(value));
