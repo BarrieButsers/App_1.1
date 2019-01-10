@@ -35,10 +35,10 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
        // dropdown = (Spinner)findViewById(R.id.dropdown);
-        textViewBTStatus = (TextView)findViewById(R.id.textv_BTStatus);
+        textViewBTStatus = (TextView)findViewById(R.id.txtv_BTbtStatus);
         btList = (ListView)findViewById(R.id.list_BTDevice);
 
-        pref = getSharedPreferences("BTAddress", MODE_PRIVATE);
+        pref = getSharedPreferences("KeyValues", MODE_PRIVATE);
 
         actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);

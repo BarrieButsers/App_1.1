@@ -7,64 +7,64 @@
     tools:context=".NKActivity">
 
     <TextView
-        android:id="@+id/textv_NKBT"
+        android:id="@+id/txtv_NKbt"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:gravity="center"
         android:text="BT Verbindung"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textv_NKaktV"
+        android:id="@+id/txtv_NKaktV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="16dp"
         android:gravity="center"
         android:text="akt V"
         android:textSize="22sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textv_NKmaxV"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txtv_NKmaxV"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textv_NKmaxV"
+        android:id="@+id/txtv_NKmaxV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
         android:gravity="center"
         android:text="max V"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
 
     <TextView
-        android:id="@+id/textv_NKaktA"
+        android:id="@+id/txtv_NKaktA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="16dp"
         android:gravity="center"
         android:text="akt A"
         android:textSize="22sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/textv_NKmaxA"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txtv_NKmaxA"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textv_NKmaxA"
+        android:id="@+id/txtv_NKmaxA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="12dp"
         android:gravity="center"
         android:text="max A"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textv_NKmaxV" />
+        app:layout_constraintTop_toBottomOf="@+id/txtv_NKmaxV" />
 
     <Button
         android:id="@+id/btn_NK"
@@ -74,8 +74,45 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="Button"
-        app:layout_constraintBottom_toTopOf="@+id/textv_NKBT"
+        app:layout_constraintBottom_toTopOf="@+id/txtv_NKbt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:scaleY="5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtv_NKradius"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="akt Radius"
+        android:textSize="22sp"
+        android:gravity="center"
+        app:layout_constraintBaseline_toBaselineOf="@+id/txtv_NKdeltav"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/txtv_NKdeltav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="8dp"
+        android:text="Delta V"
+        android:textSize="22sp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtv_NKmaxA" />
 
 </android.support.constraint.ConstraintLayout>

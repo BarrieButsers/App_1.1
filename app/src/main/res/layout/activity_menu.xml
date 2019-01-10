@@ -15,16 +15,16 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_Menu">
+        app:layout_constraintTop_toBottomOf="@+id/txtv_Menu">
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/btn_MenuVK"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="VK Modus" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/btn_MenuNK"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="NK Modus" />
@@ -38,7 +38,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textView_Menu"
+        android:id="@+id/txtv_Menu"
         android:layout_width="309dp"
         android:layout_height="42dp"
         android:layout_marginStart="8dp"
@@ -52,20 +52,20 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/buttonSettings"
+        android:id="@+id/btn_MenuKalibrierung"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="Kalibrierung"
-        app:layout_constraintBottom_toTopOf="@+id/textViewConnStat"
+        app:layout_constraintBottom_toTopOf="@+id/txtv_MenuBTStat"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textViewConnStat"
+        android:id="@+id/txtv_MenuBTStat"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -80,13 +80,13 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Spinner
-        android:id="@+id/spinner_MProfil"
+        android:id="@+id/spinner_MenuProfil"
         android:layout_width="368dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonSettings"
+        app:layout_constraintBottom_toTopOf="@+id/btn_MenuKalibrierung"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

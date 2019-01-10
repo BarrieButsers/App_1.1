@@ -7,20 +7,20 @@
     tools:context=".KalibrierungActivity">
 
     <Button
-        android:id="@+id/btn_save"
+        android:id="@+id/btn_Kalisave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="Speichern"
-        app:layout_constraintBottom_toTopOf="@+id/textv_KaliBT"
+        app:layout_constraintBottom_toTopOf="@+id/txtv_KaliBT"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Spinner
-        android:id="@+id/spinner_profil"
+        android:id="@+id/spinner_Kaliprofil"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -31,7 +31,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/texte_name"
+        android:id="@+id/txte_Kaliname"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -42,10 +42,10 @@
         android:text="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_profil" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner_Kaliprofil" />
 
     <Spinner
-        android:id="@+id/spinner_straßenBedingung"
+        android:id="@+id/spinner_KalistraßenBedingung"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -53,10 +53,10 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/texte_name" />
+        app:layout_constraintTop_toBottomOf="@+id/txte_Kaliname" />
 
     <TextView
-        android:id="@+id/textv_temperatur"
+        android:id="@+id/txtv_KaliTemperatur"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -66,10 +66,10 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_straßenBedingung" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner_KalistraßenBedingung" />
 
     <TextView
-        android:id="@+id/textv_gWert"
+        android:id="@+id/txtv_KaligWert"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -79,10 +79,10 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textv_temperatur" />
+        app:layout_constraintTop_toBottomOf="@+id/txtv_KaliTemperatur" />
 
     <Switch
-        android:id="@+id/switch_messung"
+        android:id="@+id/switch_Kalimessung"
         android:layout_width="wrap_content"
         android:layout_height="44dp"
         android:layout_marginStart="8dp"
@@ -91,30 +91,30 @@
         android:textOff="Messung AUS"
         android:textOn="Messung AN"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textv_gWert" />
+        app:layout_constraintTop_toBottomOf="@+id/txtv_KaligWert" />
 
     <TextView
-        android:id="@+id/textv_messung"
+        android:id="@+id/txtv_Kalimessung"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="akt. Messung:"
         android:textSize="20sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/switch_messung"
+        app:layout_constraintBaseline_toBaselineOf="@+id/switch_Kalimessung"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/switch_messung" />
+        app:layout_constraintStart_toEndOf="@+id/switch_Kalimessung" />
 
     <TextView
-        android:id="@+id/textv_KaliBT"
+        android:id="@+id/txtv_KaliBT"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="TextView"
-        android:textSize="16sp"
         android:gravity="center"
+        android:text="BT Connection"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

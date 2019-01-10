@@ -24,8 +24,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.gson.Gson;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,7 +47,7 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
 
     private boolean messungLauft;
     private int strassenBedPos;
-    private double save_temperatur;
+    private double temperatur;
 
     private double x,y,z;
     double gDurchs;
@@ -65,15 +64,15 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kalibrierung);
 
-        texte_name = (EditText)findViewById(R.id.texte_name);
-        textv_gWert = (TextView)findViewById(R.id.textv_gWert);
-        textv_temperatur = (TextView)findViewById(R.id.textv_temperatur);
-        btn_save = (Button)findViewById(R.id.btn_save);
-        spinner_bedingung = (Spinner)findViewById(R.id.spinner_straßenBedingung);
-        spinner_profil = (Spinner)findViewById(R.id.spinner_profil);
-        switch_messung = (Switch)findViewById(R.id.switch_messung);
-        textv_messung = (TextView)findViewById(R.id.textv_messung);
-        textv_BT = (TextView)findViewById(R.id.textv_KaliBT);
+        texte_name = (EditText)findViewById(R.id.txte_Kaliname);
+        textv_gWert = (TextView)findViewById(R.id.txtv_KaligWert);
+        textv_temperatur = (TextView)findViewById(R.id.txtv_KaliTemperatur);
+        btn_save = (Button)findViewById(R.id.btn_Kalisave);
+        spinner_bedingung = (Spinner)findViewById(R.id.spinner_KalistraßenBedingung);
+        spinner_profil = (Spinner)findViewById(R.id.spinner_Kaliprofil);
+        switch_messung = (Switch)findViewById(R.id.switch_Kalimessung);
+        textv_messung = (TextView)findViewById(R.id.txtv_Kalimessung);
+        textv_BT = (TextView)findViewById(R.id.txtv_KaliBT);
 
         pref = getSharedPreferences("Profil", MODE_PRIVATE);
 
@@ -86,7 +85,9 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
             @Override
             void receiveMessage(String msg) {
                 if (msg.charAt(0) == 'E'){
-                    save_temperatur = Double.parseDouble(msg.substring(1));
+                    String stringTemperatur = msg.substring(1, msg.length()-1);
+                    temperatur = Double.parseDouble(stringTemperatur);
+                    textv_temperatur.setText(temperatur + "°C");
                 }
 
             }
@@ -150,7 +151,7 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
         spinner_profil.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                setUI(getProfil(position));
+                setUI(getProfil(id));
             }
 
             @Override
@@ -166,7 +167,7 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
         spinner_bedingung.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                spinnerBed(position);
+                strassenBedPos = position;
             }
 
             @Override
@@ -197,7 +198,7 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
 
     // BT Connection aufbauen
     private void btConn(){
-        SharedPreferences btPref = getSharedPreferences("BTAddress", MODE_PRIVATE);
+        SharedPreferences btPref = getSharedPreferences("KeyValues", MODE_PRIVATE);
         String address = btPref.getString("Address", null);
         try {
             btManager.connect(address.substring(address.length() - 17));
@@ -225,7 +226,7 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
          z = event.values[2];
         if (messungLauft) {
             count++;
-            gMax = kaliGmax(x, y, z);
+            gMax = kalibrierungAMax(x, y, z);
 
             String roundGMax = roundAndFormat(gMax / 9.81, 4);
             textv_gWert.setText(roundGMax);
@@ -242,7 +243,7 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
     }
 
     //Messung
-    private double kaliGmax(double x, double y, double z) {
+    private double kalibrierungAMax(double x, double y, double z) {
         double x1 = (Math.abs(x));
         gAdd = gAdd + x1;
         if (count >= 10) {
@@ -261,18 +262,15 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
     //Profil
     private void saveProfil() {
         String name = texte_name.getText().toString();
-        int bedingung = strassenBedPos;
-        double temperatur = Double.parseDouble(textv_temperatur.getText().toString());
         double gWert = save_gMax;
-        String key = spinner_profil.getSelectedItemId()+"";
-
-        Profil p1 = new Profil(name, bedingung, temperatur, gWert);
+        long key = spinner_profil.getSelectedItemId();
+        Profil p1 = new Profil(name, strassenBedPos, temperatur, gWert);
 
         try {
             SharedPreferences.Editor edit = pref.edit();
             Gson gson = new Gson();
             String json = gson.toJson(p1);
-            edit.putString(key, json);
+            edit.putString(String.valueOf(key), json);
             edit.commit();
             Toast.makeText(getApplicationContext(), "write successful", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
@@ -280,10 +278,9 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
         }
     }
 
-    private Profil getProfil(int key){
-        //String key = spinner_profil.getSelectedItemId()+"";
+    private Profil getProfil(long key){
         Gson gson = new Gson();
-        String json = pref.getString(""+key, "");
+        String json = pref.getString(String.valueOf(key), null);
         Profil profil = gson.fromJson(json, Profil.class);
        if (profil != null) {
             return profil;
@@ -291,8 +288,6 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
             profil = new Profil("Neues Profil",0,99,0);
             return profil;
        }
-
-
     }
 
     private void setUI(Profil profil){

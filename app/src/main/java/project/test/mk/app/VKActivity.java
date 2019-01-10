@@ -1,3 +1,8 @@
+/*
+
+vAkt in km/h
+aMax in m/s^2
+ */
 package project.test.mk.app;
 
 import android.content.Intent;
@@ -5,18 +10,11 @@ import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
+import java.math.BigDecimal;
 
 public class VKActivity extends AppCompatActivity {
 
@@ -25,9 +23,7 @@ public class VKActivity extends AppCompatActivity {
     private BTManager btManager;
     private BTMsgHandler btMsgHandler;
 
-    private Button btnTest;
-
-    double geschw, gmax;
+    double aMax;
 
     private SharedPreferences pref;
     private ActionBar actionBar;
@@ -38,13 +34,13 @@ public class VKActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vk);
 
-        textRadius = (TextView)findViewById(R.id.text_radius);
-        textGeschw = (TextView)findViewById(R.id.text_geschw);
-        textGMax = (TextView)findViewById(R.id.text_gmax);
-        textv_BT = (TextView)findViewById(R.id.textv_VKBT);
+        textRadius = (TextView)findViewById(R.id.txtv_VKradius);
+        textGeschw = (TextView)findViewById(R.id.txtv_VKgeschw);
+        textGMax = (TextView)findViewById(R.id.txtv_VKgmax);
+        textv_BT = (TextView)findViewById(R.id.txtv_VKBT);
 
         pref = getSharedPreferences("KeyValues", 0);
-        gmax = getGmax();
+        aMax = getAMax();
 
         actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
@@ -52,12 +48,15 @@ public class VKActivity extends AppCompatActivity {
         btMsgHandler = new BTMsgHandler() {
             @Override
             void receiveMessage(String msg) {
-                if (msg.charAt(0)== 'A'){
-                    String temp = msg.substring(1);
-                    geschw = Double.parseDouble(temp);
-                    textRadius.setText(radiusBerechnen(geschw, gmax)+"");
+                if (msg.charAt(0)== 'B'){
+                    String vString = msg.substring(1, msg.length()-1);
+                    double vAkt = Double.parseDouble(vString);
+                    double radius = radiusBerechnen(vAkt, aMax);
+                    textRadius.setText(roundAndFormat(radius, 0)+ " m");
+                    textGeschw.setText(vAkt +" km/h");
                 }
             }
+
 
             @Override
             void receiveConnectStatus(boolean isConnected) {
@@ -94,29 +93,30 @@ public class VKActivity extends AppCompatActivity {
         return true;
     }
 
-    private double getGmax(){
+    private double getAMax(){
         try {
-            SharedPreferences pref = getSharedPreferences("BTAddress", MODE_PRIVATE);
+            SharedPreferences pref = getSharedPreferences("KeyValues", MODE_PRIVATE);
             String s = pref.getString("GMax", null);
 
             if (s != null){
                 double d = Double.parseDouble(s);
-                textGMax.setText("G Max: "+d/9.81);
+                double e = d / 9.81;
+                textGMax.setText("G-Max: "+roundAndFormat(e,2));
                 return d;
-            }else if (s == null){
-                Toast.makeText(getApplicationContext(), "getGmax error", Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(getApplicationContext(), "getAMax error", Toast.LENGTH_LONG).show();
                 return 0;
             }
         } catch(Exception e){
-            Toast.makeText(getApplicationContext(), "getGmax error", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "getAMax error", Toast.LENGTH_LONG).show();
             return 0;
         }
-        return 0;
     }
 
     public double radiusBerechnen (double v, double a){
-        double r = Math.pow(v,2) / a;
-        return r;
+        double v1 = v / 3.6;       // V in m/s umrechnen
+        double radius = Math.pow(v1,2) / a;
+        return radius;       // Radius in Metern
     }
 
     private void btConn(){
@@ -127,5 +127,11 @@ public class VKActivity extends AppCompatActivity {
         } catch (Exception e){
             Toast.makeText(getApplicationContext(), "BT-Conn error", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public String roundAndFormat(final double value, final int frac) {
+        final java.text.NumberFormat nf = java.text.NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(frac);
+        return nf.format(new BigDecimal(value));
     }
 }
