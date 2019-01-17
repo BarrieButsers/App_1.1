@@ -26,8 +26,6 @@ public class MenuActivity extends AppCompatActivity {
 
     private SharedPreferences prefKeyValues, prefProfil;
 
-    private boolean istVerbunden = false;
-
 
 
 
@@ -78,11 +76,9 @@ public class MenuActivity extends AppCompatActivity {
                 if (isConnected) {
                     txt_btStat.setText("Connected");
                     txt_btStat.setTextColor(Color.parseColor("#01DF01"));
-                    istVerbunden = true;
                 } else {
                     txt_btStat.setText("No Connection");
                     txt_btStat.setTextColor(Color.parseColor("#d60000"));
-                    istVerbunden = false;
                 }
             }
 
