@@ -18,9 +18,8 @@ import java.util.ArrayList;
 public class SettingsActivity extends AppCompatActivity {
 
     private BTManager btManager;
-
+    private BTMsgHandler btMsgHandler;
     private TextView textViewBTStatus;
-
     private SharedPreferences pref;
 
     @Override
@@ -36,7 +35,7 @@ public class SettingsActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
 
-        BTMsgHandler btMsgHandler = new BTMsgHandler() {
+        btMsgHandler = new BTMsgHandler() {
             @Override
             void receiveMessage(String msg) {
 
