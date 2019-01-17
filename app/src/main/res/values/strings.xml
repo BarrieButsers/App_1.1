@@ -1,5 +1,10 @@
 <resources>
-    <string name="app_name">App_1.1</string>
+    <string name="app_name">Max Curve</string>
+    <string name="label_kali">Kalibrierung</string>
+    <string name="label_nk">Nach-Kurvenmodus</string>
+    <string name="label_vk">Vor-Kurvenmodus</string>
+    <string name="label_bt">BT-Verbindung</string>
+
 
     <string-array name="profil">
         <item>Profil 1</item>

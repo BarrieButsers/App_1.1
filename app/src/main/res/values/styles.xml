@@ -8,4 +8,26 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="ThemeSpinner">
+        <!-- Color when pressed -->
+        <item name="colorAccent">#d34</item>
+        <!-- Default color for the dropdown arrow and line -->
+        <item name="colorControlNormal">#ffffff</item>
+    </style>
+
+    <style name="ListFont" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+
+    <style name="linearLayoutStyle">
+        <item name="android:layout_marginTop">5dp</item>
+    </style>
+
+    <style name="linearLayoutStyleSpinner">
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="colorAccent">#d34</item>
+        <item name="colorControlNormal">#ffffff</item>
+    </style>
+
 </resources>

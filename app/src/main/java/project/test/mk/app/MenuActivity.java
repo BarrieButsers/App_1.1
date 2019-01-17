@@ -2,6 +2,7 @@ package project.test.mk.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,14 +20,13 @@ import com.google.gson.Gson;
 
 public class MenuActivity extends AppCompatActivity {
 
-    private Button btn1, btn2, btn3, btnSettings;
     private TextView txt_btStat;
-    private Spinner spinner_profil;
 
-    private BTMsgHandler btMsgHandler;
     private BTManager btManager;
 
     private SharedPreferences prefKeyValues, prefProfil;
+
+    private boolean istVerbunden = false;
 
 
 
@@ -37,38 +37,37 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        btn1 = (Button)findViewById(R.id.btn_MenuVK);
-        btn2 = (Button)findViewById(R.id.btn_MenuNK);
-        btn3 = (Button)findViewById(R.id.button3);
-        btnSettings = (Button)findViewById(R.id.btn_MenuKalibrierung);
+        Button btn_VK = (Button) findViewById(R.id.btn_MenuVK);
+        Button btn_NK = (Button) findViewById(R.id.btn_MenuNK);
+        Button btn_Kali = (Button) findViewById(R.id.btn_MenuKalibrierung);
         txt_btStat = (TextView)findViewById(R.id.txtv_MenuBTStat);
-        spinner_profil = (Spinner)findViewById(R.id.spinner_MenuProfil);
+        Spinner spinner_profil = (Spinner) findViewById(R.id.spinner_MenuProfil);
 
         prefKeyValues = getSharedPreferences("KeyValues", MODE_PRIVATE);
         prefProfil = getSharedPreferences("Profil", MODE_PRIVATE);
 
-        btnSettings.setOnClickListener(new View.OnClickListener() {
+        btn_Kali.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openKalibrierung();
             }
         });
 
-        btn1.setOnClickListener(new View.OnClickListener() {
+        btn_VK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openVK();
             }
         });
 
-        btn2.setOnClickListener(new View.OnClickListener() {
+        btn_NK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openNK();
             }
         });
 
-        btMsgHandler = new BTMsgHandler() {
+        BTMsgHandler btMsgHandler = new BTMsgHandler() {
             @Override
             void receiveMessage(String msg) {
 
@@ -76,10 +75,14 @@ public class MenuActivity extends AppCompatActivity {
 
             @Override
             void receiveConnectStatus(boolean isConnected) {
-                if (isConnected){
+                if (isConnected) {
                     txt_btStat.setText("Connected");
-                }else{
+                    txt_btStat.setTextColor(Color.parseColor("#01DF01"));
+                    istVerbunden = true;
+                } else {
                     txt_btStat.setText("No Connection");
+                    txt_btStat.setTextColor(Color.parseColor("#d60000"));
+                    istVerbunden = false;
                 }
             }
 
@@ -98,7 +101,8 @@ public class MenuActivity extends AppCompatActivity {
 
         btconn(getAddress());
 
-        ArrayAdapter<CharSequence> adapterBedingung = ArrayAdapter.createFromResource(this, R.array.profil, android.R.layout.simple_spinner_item);
+
+        ArrayAdapter<CharSequence> adapterBedingung = ArrayAdapter.createFromResource(this, R.array.profil, R.layout.spinner_item);
         adapterBedingung.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_profil.setAdapter(adapterBedingung);
         spinner_profil.setSelection(getProfilPos());
@@ -123,6 +127,8 @@ public class MenuActivity extends AppCompatActivity {
 
     private void btconn(String btInfo){
         try{
+            txt_btStat.setText("Connecting...");
+            txt_btStat.setTextColor(Color.parseColor("#ffffff"));
             String address = btInfo.substring(btInfo.length() - 17);
             btManager.connect(address);
         }catch(Exception e){
@@ -145,8 +151,7 @@ public class MenuActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.item1:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
+                openSettings();
         }
 
         return super.onOptionsItemSelected(item);

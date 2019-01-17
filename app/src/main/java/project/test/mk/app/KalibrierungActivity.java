@@ -6,6 +6,7 @@
 package project.test.mk.app;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,14 +18,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.gson.Gson;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,9 +31,8 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
 
     private EditText texte_name;
     private TextView textv_temperatur, textv_gWert, textv_messung, textv_BT;
-    private Button btn_save;
+    private Button btn_messung;
     private Spinner spinner_profil, spinner_bedingung;
-    private Switch switch_messung;
 
     private Sensor sensor;
     private SensorManager sensorManager;
@@ -47,14 +44,11 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
 
     private boolean messungLauft;
     private int strassenBedPos;
-    private double temperatur;
+    private double aktTemperatur;
 
-    private double x,y,z;
-    double gDurchs;
     int count = 0;
     double gAdd = 0;
-    double gMax = 0;
-    double save_gMax;
+    double aMax = 0;
     ArrayList<Double> gDurchsArray = new ArrayList<>();
 
     private ActionBar actionBar;
@@ -67,12 +61,12 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
         texte_name = (EditText)findViewById(R.id.txte_Kaliname);
         textv_gWert = (TextView)findViewById(R.id.txtv_KaligWert);
         textv_temperatur = (TextView)findViewById(R.id.txtv_KaliTemperatur);
-        btn_save = (Button)findViewById(R.id.btn_Kalisave);
+        Button btn_save = (Button) findViewById(R.id.btn_Kalisave);
         spinner_bedingung = (Spinner)findViewById(R.id.spinner_KalistraßenBedingung);
         spinner_profil = (Spinner)findViewById(R.id.spinner_Kaliprofil);
-        switch_messung = (Switch)findViewById(R.id.switch_Kalimessung);
         textv_messung = (TextView)findViewById(R.id.txtv_Kalimessung);
         textv_BT = (TextView)findViewById(R.id.txtv_KaliBT);
+        btn_messung = (Button)findViewById(R.id.btn_Kalimessung);
 
         pref = getSharedPreferences("Profil", MODE_PRIVATE);
 
@@ -86,8 +80,7 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
             void receiveMessage(String msg) {
                 if (msg.charAt(0) == 'E'){
                     String stringTemperatur = msg.substring(1, msg.length()-1);
-                    temperatur = Double.parseDouble(stringTemperatur);
-                    textv_temperatur.setText(temperatur + "°C");
+                    aktTemperatur = Double.parseDouble(stringTemperatur);
                 }
 
             }
@@ -96,8 +89,11 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
             void receiveConnectStatus(boolean isConnected) {
                 if (isConnected){
                     textv_BT.setText("Connected");
+                    textv_BT.setTextColor(Color.parseColor("#01DF01"));
+
                 }else{
                     textv_BT.setText("No Connection");
+                    textv_BT.setTextColor(Color.parseColor("#d60000"));
                 }
 
             }
@@ -124,28 +120,8 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
         sensorManager.registerListener( this, sensor, SensorManager.SENSOR_DELAY_GAME);
         gDurchsArray.add(0.0);
 
-
-
-        // Switch_Messung
-        switch_messung.setChecked(false);
-        switch_messung.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    messungLauft = true;
-
-                }else{
-                    messungLauft = false;
-                    textv_messung.setText("keine akt Daten");
-                    gMax = 0;
-                    gDurchs = 0;
-                    gAdd = 0;
-                }
-            }
-        });
-
         // Spinner Profil
-        ArrayAdapter<CharSequence> adapterProfil = ArrayAdapter.createFromResource(this, R.array.profil, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapterProfil = ArrayAdapter.createFromResource(this, R.array.profil, R.layout.spinner_item);
         adapterProfil.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_profil.setAdapter(adapterProfil);
         spinner_profil.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -161,7 +137,7 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
         });
 
         //Spinner Bedingungen
-        ArrayAdapter<CharSequence> adapterBedingung = ArrayAdapter.createFromResource(this, R.array.straßenBedingungen, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapterBedingung = ArrayAdapter.createFromResource(this, R.array.straßenBedingungen, R.layout.spinner_item);
         adapterBedingung.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_bedingung.setAdapter(adapterBedingung);
         spinner_bedingung.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -176,11 +152,29 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
             }
         });
 
+
+
         // Button Save
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sendPostRequest();
                 saveProfil();
+
+            }
+        });
+
+        btn_messung.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!messungLauft){
+                    messungLauft = true;
+                    btn_messung.setText("Messung Stop");
+                }else{
+                    messungLauft = false;
+                    textv_messung.setText("akt. Messung: keine Messung");
+                    btn_messung.setText("Messung Start");
+                }
             }
         });
 
@@ -221,17 +215,15 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
     // Sensor
     @Override
     public void onSensorChanged(SensorEvent event) {
-         x = event.values[0];
-         y = event.values[1];
-         z = event.values[2];
         if (messungLauft) {
+            double x = event.values[0];
             count++;
-            gMax = kalibrierungAMax(x, y, z);
-
-            String roundGMax = roundAndFormat(gMax / 9.81, 4);
-            textv_gWert.setText(roundGMax);
+            aMax = kalibrierungAMax(x);
+            String roundGMax = roundAndFormat(aMax / 9.81, 4);
+            textv_gWert.setText("max G-Wert: "+roundGMax);
             String roundMessung = roundAndFormat(Math.abs(x) / 9.81, 4);
             textv_messung.setText("akt. Messung: "+roundMessung);
+            textv_temperatur.setText("akt. Außentemperatur: "+aktTemperatur+"°C");
         }
     }
 
@@ -243,28 +235,27 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
     }
 
     //Messung
-    private double kalibrierungAMax(double x, double y, double z) {
-        double x1 = (Math.abs(x));
-        gAdd = gAdd + x1;
-        if (count >= 10) {
+    private double kalibrierungAMax(double x) {
+        double gDurchs;
+        gAdd = gAdd + Math.abs(x);
+        if (count == 10) {
             gDurchs = gAdd / count;
             gDurchsArray.add(gDurchs);
             count = 0;
             gDurchs = 0;
             gAdd = 0;
+            aMax = Collections.max(gDurchsArray);
         }
-        gMax = Collections.max(gDurchsArray);
-        save_gMax = gMax;
-        return gMax;
+        return aMax;
     }
 
 
     //Profil
     private void saveProfil() {
+        Boolean save_success;
         String name = texte_name.getText().toString();
-        double gWert = save_gMax;
         long key = spinner_profil.getSelectedItemId();
-        Profil p1 = new Profil(name, strassenBedPos, temperatur, gWert);
+        Profil p1 = new Profil(name, strassenBedPos, aktTemperatur, aMax);
 
         try {
             SharedPreferences.Editor edit = pref.edit();
@@ -272,10 +263,23 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
             String json = gson.toJson(p1);
             edit.putString(String.valueOf(key), json);
             edit.commit();
+            save_success = true;
             Toast.makeText(getApplicationContext(), "write successful", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
+            save_success = false;
             Toast.makeText(getApplicationContext(), "write error", Toast.LENGTH_LONG).show();
         }
+        if (save_success){
+            aMax = 0;
+            gDurchsArray.clear();
+        }
+    }
+
+    private void sendPostRequest(){
+        SendPostRequest sendPostRequest = new SendPostRequest();
+        sendPostRequest.setProfilNr(spinner_profil.getSelectedItemPosition()+1);
+        sendPostRequest.setgMax(aMax/9.81);
+        sendPostRequest.execute();
     }
 
     private Profil getProfil(long key){
@@ -300,19 +304,14 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
 
             if (texte_name!=null) {
                 texte_name.setText(name);
-                textv_temperatur.setText("Außentemperatur: "+temperatur);
-                textv_gWert.setText("Max G-Wert: "+stringgWert);
+                textv_temperatur.setText("gespeicherte Außentemperatur: "+temperatur+"°C");
+                textv_gWert.setText("gespeicherter max G-Wert: "+stringgWert);
                 spinner_bedingung.setSelection(sb);
-            }else{
-                texte_name.setText("-");
-                textv_temperatur.setText("-");
-                textv_gWert.setText("-");
             }
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "setUI error", Toast.LENGTH_LONG).show();
 
         }
-
     }
 
     // Extra Methoden
@@ -331,6 +330,5 @@ public class KalibrierungActivity extends AppCompatActivity implements SensorEve
         nf.setMaximumFractionDigits(frac);
         return nf.format(new BigDecimal(value));
     }
-
 
 }

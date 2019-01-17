@@ -7,10 +7,10 @@ package project.test.mk.app;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,12 +21,10 @@ public class VKActivity extends AppCompatActivity {
     private TextView textRadius, textGeschw, textGMax, textv_BT;
 
     private BTManager btManager;
-    private BTMsgHandler btMsgHandler;
 
     double aMax;
 
     private SharedPreferences pref;
-    private ActionBar actionBar;
 
 
     @Override
@@ -42,28 +40,30 @@ public class VKActivity extends AppCompatActivity {
         pref = getSharedPreferences("KeyValues", 0);
         aMax = getAMax();
 
-        actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
 
-        btMsgHandler = new BTMsgHandler() {
+        BTMsgHandler btMsgHandler = new BTMsgHandler() {
             @Override
             void receiveMessage(String msg) {
-                if (msg.charAt(0)== 'B'){
-                    String vString = msg.substring(1, msg.length()-1);
+                if (msg.charAt(0) == 'B') {
+                    String vString = msg.substring(1, msg.length() - 1);
                     double vAkt = Double.parseDouble(vString);
                     double radius = radiusBerechnen(vAkt, aMax);
-                    textRadius.setText(roundAndFormat(radius, 0)+ " m");
-                    textGeschw.setText(vAkt +" km/h");
+                    setTextGeschw(vAkt);
+                    setTextRadius(radius);
                 }
             }
 
 
             @Override
             void receiveConnectStatus(boolean isConnected) {
-                if (isConnected){
+                if (isConnected) {
                     textv_BT.setText("Connected");
-                }else{
+                    textv_BT.setTextColor(Color.parseColor("#01DF01"));
+                } else {
                     textv_BT.setText("No Connection");
+                    textv_BT.setTextColor(Color.parseColor("#d60000"));
                 }
             }
 
@@ -100,8 +100,7 @@ public class VKActivity extends AppCompatActivity {
 
             if (s != null){
                 double d = Double.parseDouble(s);
-                double e = d / 9.81;
-                textGMax.setText("G-Max: "+roundAndFormat(e,2));
+                setTextGMax(d);
                 return d;
             }else{
                 Toast.makeText(getApplicationContext(), "getAMax error", Toast.LENGTH_LONG).show();
@@ -115,8 +114,7 @@ public class VKActivity extends AppCompatActivity {
 
     public double radiusBerechnen (double v, double a){
         double v1 = v / 3.6;       // V in m/s umrechnen
-        double radius = Math.pow(v1,2) / a;
-        return radius;       // Radius in Metern
+        return Math.pow(v1,2) / a;       // Radius in Metern
     }
 
     private void btConn(){
@@ -133,5 +131,18 @@ public class VKActivity extends AppCompatActivity {
         final java.text.NumberFormat nf = java.text.NumberFormat.getInstance();
         nf.setMaximumFractionDigits(frac);
         return nf.format(new BigDecimal(value));
+    }
+
+    private void setTextGeschw(double v){
+        textGeschw.setText("akt.Geschw.:"+v+" km/h");
+    }
+
+    private void setTextRadius(double radius){
+        textRadius.setText("möglicher Kurvenradius: "+roundAndFormat(radius,0)+" m");
+    }
+
+    private void setTextGMax(double gMax){
+        gMax = gMax/9.81;
+        textGMax.setText("Max Querbeschleunigung: "+roundAndFormat(gMax, 2));
     }
 }
